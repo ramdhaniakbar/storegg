@@ -1,11 +1,40 @@
+import Cookies from 'js-cookie';
+import jwtDecode from 'jwt-decode';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import { JWTPayloadTypes, UserTypes } from '../../../services/data-types/index';
 
-interface AuthProps {
-   isLogin?: boolean;
-}
+const Auth = () => {
+   const [isLogin, setIsLogin] = useState(false);
+   const [user, setUser] = useState({
+      avatar: '',
+   });
+   const router = useRouter();
 
-const Auth = (props: AuthProps) => {
-   const { isLogin } = props;
+   useEffect(() => {
+      const token = Cookies.get('token');
+
+      if (token) {
+         const jwtToken = Buffer.from(token, 'base64').toString('ascii');
+         const payload: JWTPayloadTypes = jwtDecode(jwtToken);
+         const userFromPayload: UserTypes = payload.player;
+         const IMG = process.env.NEXT_PUBLIC_IMG;
+         user.avatar = `${IMG}/${userFromPayload.avatar}`;
+         setIsLogin(true);
+         setUser(user);
+      }
+   }, []);
+
+   const onLogout = () => {
+      Cookies.remove('token');
+      router.push('/');
+      setIsLogin(false);
+   };
+
+   const IMG = process.env.NEXT_PUBLIC_IMG;
+   const fileName = user.avatar.split('/')[user.avatar.length - 1];
+
    if (isLogin) {
       return (
          <li className='nav-item my-auto dropdown d-flex'>
@@ -19,13 +48,23 @@ const Auth = (props: AuthProps) => {
                   data-bs-toggle='dropdown'
                   aria-expanded='false'
                >
-                  <img
-                     src='/img/avatar-1.png'
-                     className='rounded-circle'
-                     width='40'
-                     height='40'
-                     alt=''
-                  />
+                  {user.avatar === `${IMG}/${fileName}` ? (
+                     <img
+                        src='/img/Sign-up-photo-1.png'
+                        className='rounded-circle'
+                        width='40'
+                        height='40'
+                        alt=''
+                     />
+                  ) : (
+                     <img
+                        src={user.avatar}
+                        className='rounded-circle'
+                        width='40'
+                        height='40'
+                        alt=''
+                     />
+                  )}
                </a>
 
                <ul
@@ -34,10 +73,7 @@ const Auth = (props: AuthProps) => {
                >
                   <li>
                      <Link href='/member'>
-                        <a
-                           className='dropdown-item text-lg color-palette-2'
-                           href='#'
-                        >
+                        <a className='dropdown-item text-lg color-palette-2'>
                            My Profile
                         </a>
                      </Link>
@@ -63,14 +99,13 @@ const Auth = (props: AuthProps) => {
                      </Link>
                   </li>
                   <li>
-                     <Link href='/sign-in'>
-                        <a
-                           className='dropdown-item text-lg color-palette-2'
-                           href='#'
-                        >
-                           Log Out
-                        </a>
-                     </Link>
+                     <a
+                        onClick={onLogout}
+                        className='dropdown-item text-lg color-palette-2'
+                        href=''
+                     >
+                        Log Out
+                     </a>
                   </li>
                </ul>
             </div>

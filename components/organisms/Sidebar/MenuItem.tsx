@@ -12,18 +12,19 @@ interface MenuItemProps {
       | 'ic-menu-settings'
       | 'ic-menu-logout';
    active?: boolean;
-   href: string;
+   href?: string;
+   onClick?: () => void;
 }
 
 const MenuItem = (props: MenuItemProps) => {
-   const { title, icon, active, href } = props;
+   const { title, icon, active, href, onClick } = props;
    const classItem = cx({
       item: true,
       'mb-30': true,
       active: active,
    });
    return (
-      <div className={classItem}>
+      <div className={classItem} onClick={onClick}>
          <img
             className='menu-icon me-3'
             src={`/icon/${icon}.svg`}
@@ -31,9 +32,15 @@ const MenuItem = (props: MenuItemProps) => {
             height='25'
          />
          <p className='item-title m-0'>
-            <Link href={href}>
-               <a className='text-lg text-decoration-none'>{title}</a>
-            </Link>
+            {onClick ? (
+               <a className='text-lg text-decoration-none' href=''>
+                  {title}
+               </a>
+            ) : (
+               <Link href={href}>
+                  <a className='text-lg text-decoration-none'>{title}</a>
+               </Link>
+            )}
          </p>
       </div>
    );

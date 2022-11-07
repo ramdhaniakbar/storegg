@@ -11,6 +11,7 @@
    },
    "plugins": ["react"],
    "rules": {
+      "strict-type-predicates": true,
       "react/jsx-filename-extension": [
          1,
          { "extensions": [".js", ".jsx", ".ts", ".tsx"] }

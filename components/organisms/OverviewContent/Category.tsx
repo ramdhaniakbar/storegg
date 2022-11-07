@@ -1,10 +1,11 @@
 import Image from 'next/image';
 import { ReactNode } from 'react';
+import { NumericFormat } from 'react-number-format';
 
 interface CategoryProps {
    children: ReactNode;
    nominal: number;
-   icon: 'ic-desktop' | 'ic-mobile';
+   icon: string;
 }
 
 const Category = (props: CategoryProps) => {
@@ -19,7 +20,13 @@ const Category = (props: CategoryProps) => {
             <div>
                <p className='text-sm color-palette-2 mb-1'>Total Spent</p>
                <p className='text-2xl color-palette-1 fw-medium m-0'>
-                  {nominal}
+                  <NumericFormat
+                     prefix='Rp. '
+                     value={nominal}
+                     displayType='text'
+                     decimalSeparator=','
+                     thousandSeparator='.'
+                  />
                </p>
             </div>
          </div>
